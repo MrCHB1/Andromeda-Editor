@@ -1,0 +1,146 @@
+﻿<Window x:Class="Andromeda_Editor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Andromeda_Editor"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        Title="Andromeda" Height="720" Width="1280"
+        PreviewDragEnter="Window_PreviewDragEnter"
+        PreviewDragLeave="Window_PreviewDragLeave">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="20"/>
+    </WindowChrome.WindowChrome>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!-- Custom MacOS-style buttons -->
+        <Grid Visibility="{Binding ChromeVisibility, RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" Background="#191919">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <DockPanel HorizontalAlignment="Left">
+                <Image Source="/Andromeda_Logo.png" Margin="2,2,2,2"></Image>
+                <Label Content="Andromeda" VerticalAlignment="Center" FontSize="8" Foreground="White"></Label>
+            </DockPanel>
+            
+            <DockPanel HorizontalAlignment="Right" Margin="4,4,4,4" Grid.Column="1">
+                <Rectangle x:Name="win_BtnMaximize" Width="12" Height="12" Fill="#FF57DC00" RadiusX="6" RadiusY="6" Margin="3,0,3,0" WindowChrome.IsHitTestVisibleInChrome="True" />
+                <Rectangle x:Name="win_BtnMinimize" Width="12" Height="12" Fill="#FFFFBB00" RadiusX="6" RadiusY="6" Margin="3,0,3,0" WindowChrome.IsHitTestVisibleInChrome="True" MouseUp="MinimizeWindow" />
+                <Rectangle x:Name="win_BtnClose" Width="12" Height="12" Fill="#FFFF5050" RadiusX="6" RadiusY="6" Margin="3,0,3,0" WindowChrome.IsHitTestVisibleInChrome="True" MouseUp="CloseWindow" />
+            </DockPanel>
+        </Grid>
+        <DockPanel Background="#191919" Grid.Row="1">
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_File">
+                    <MenuItem Header="Import">
+                        <MenuItem Header="MIDI File (.mid)" />
+                        <MenuItem Header="MIDI Art (.mda)" />
+                    </MenuItem>
+                    <MenuItem Header="Export">
+                        <MenuItem Header="MIDI File (.mid)" />
+                        <MenuItem Header="MIDI Art (.mda)" />
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="_Tools">
+                    <MenuItem Header="Analysis">
+                        <MenuItem Header="Quick MIDI File Analysis" Click="MIAnalyzeMIDI_Click"/>
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
+            <Grid Height="Auto">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Border Margin="5,5,5,5">
+                    <Image Grid.Row="0" Grid.Column="0" Source="/Andromeda_Logo.png">
+
+                    </Image>
+                </Border>
+                <StackPanel Grid.Row="0" Grid.Column="1">
+                    <DockPanel>
+                        <Border HorizontalAlignment="Left" BorderBrush="White" BorderThickness="1">
+                            <DockPanel Margin="2,2,2,2">
+                                <Button Width="22" Height="22" Margin="1,1,1,1"/>
+                                <Button Width="22" Height="22" Margin="1,1,1,1"/>
+                                <Button Width="33" Height="33" Margin="1,1,1,1"/>
+                                <Button Width="22" Height="22" Margin="1,1,1,1"/>
+                                <Button Width="22" Height="22" Margin="1,1,1,1"/>
+                                <Separator/>
+                                <Border Margin="5,5,5,5" BorderBrush="White" BorderThickness="1" Width="116" CornerRadius="4.5" Background="#FF777777">
+                                    <Label Content="0:0" VerticalAlignment="Center" FontSize="15" Foreground="White"/>
+                                </Border>
+                            </DockPanel>
+                        </Border>
+                        <Border HorizontalAlignment="Left" BorderBrush="White" BorderThickness="1">
+                            <DockPanel Margin="2,2,2,2">
+                                <Grid Width="130">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <local:NumericControl Margin="1,1,1,1" Grid.Row="0" Height="20">
+                                        
+                                    </local:NumericControl>
+                                    <Grid Grid.Row="1" Height="20">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <DockPanel Grid.Column="0">
+                                            <Label Content="Gate" FontSize="8" Foreground="White"/>
+                                            <local:NumericControl Margin="1,1,1,1" Grid.Column="0"/>
+                                        </DockPanel>
+                                        <DockPanel Grid.Column="1">
+                                            <Label Content="Velo" FontSize="8" Foreground="White"/>
+                                            <local:NumericControl Margin="1,1,1,1" Grid.Column="0"/>
+                                        </DockPanel>
+                                    </Grid>
+                                </Grid>
+                            </DockPanel>
+                        </Border>
+                        <Border HorizontalAlignment="Left" BorderBrush="White" BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <DockPanel Grid.Row="0">
+                                    <Button Width="20" Height="20" Margin="1,1,1,1"></Button>
+                                    <Button Width="20" Height="20" Margin="1,1,1,1"></Button>
+                                    <Button Width="20" Height="20" Margin="1,1,1,1"></Button>
+                                    <Button Width="20" Height="20" Margin="1,1,1,1"></Button>
+                                </DockPanel>
+                                <DockPanel Grid.Row="1">
+                                    <Button Width="20" Height="20" Margin="1,1,1,1"></Button>
+                                    <Button Width="20" Height="20" Margin="1,1,1,1"></Button>
+                                    <Button Width="20" Height="20" Margin="1,1,1,1"></Button>
+                                    <Button Width="20" Height="20" Margin="1,1,1,1"></Button>
+                                </DockPanel>
+                            </Grid>
+                        </Border>
+                    </DockPanel>
+                </StackPanel>
+                <Border Grid.Row="1" Grid.Column="0" BorderBrush="White" BorderThickness="1">
+                    <StackPanel>
+                        <StackPanel Margin="4,4,4,4">
+                            <Button Margin="2,2,2,2" Width="35" Height="35">pencil</Button>
+                            <Button Margin="2,2,2,2" Width="35" Height="35">eraser</Button>
+                            <Button Margin="2,2,2,2" Width="35" Height="35">select</Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                <local:DXElement x:Name="D3DRenderer" Grid.Row="1" Grid.Column="1" MouseWheel="RendererScroll" MouseDown="RendererClick"/>
+            </Grid>
+        </DockPanel>
+    </Grid>
+</Window>

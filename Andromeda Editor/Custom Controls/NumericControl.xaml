@@ -1,0 +1,27 @@
+﻿<UserControl x:Class="Andromeda_Editor.NumericControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Andromeda_Editor"
+             KeyDown="UserControl_KeyDown"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="100">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="13"/>
+        </Grid.ColumnDefinitions>
+        <TextBox Text="0" TextChanged="TextBox_TextChanged" x:Name="textBox" Background="#191919" Foreground="White" BorderBrush="#FF797979">
+            
+        </TextBox>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Button Name="upArrow" Grid.Row="0" FontWeight="Bold" Content="︿" Click="Increment" FontSize="4" Background="#00000000" Foreground="White"/>
+            <Button Name="downArrow" Grid.Row="1" FontWeight="Bold" Content="﹀" Click="Decrement" FontSize="4" Background="#00000000" Foreground="White"/>
+        </Grid>
+    </Grid>
+</UserControl>
