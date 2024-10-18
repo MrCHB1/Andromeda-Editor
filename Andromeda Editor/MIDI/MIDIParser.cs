@@ -177,7 +177,7 @@ namespace Andromeda_Editor.MIDI
 
         public void Dispose()
         {
-            TrackPointers = null;
+            TrackPointers.Clear();
             fileStream.Close();
             fileStream.Dispose();
         }

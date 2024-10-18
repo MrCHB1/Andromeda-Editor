@@ -12,11 +12,15 @@
 
   <ItemGroup>
     <None Remove="Andromeda_Logo.png" />
+    <None Remove="Shaders\TrackListNotes.fx" />
     <None Remove="Shaders\TrackListTrack.fx" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Andromeda_Logo.ico" />
+    <Content Include="Shaders\TrackListNotes.fx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Shaders\TrackListTrack.fx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

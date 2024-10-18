@@ -28,8 +28,10 @@ namespace Andromeda_Editor.Rendering
 
     public class EditorRenderer
     {
-        #region structs for track list view
         int TLBarBufferLength = RenderSettings.BarBufferLength;
+        int TLNoteBufferLength = RenderSettings.NoteBufferLength;
+
+        #region structs for track list view
 
         // Track backgrounds
         // This is rendered every track
@@ -51,23 +53,56 @@ namespace Andromeda_Editor.Rendering
             public uint BarNumber;
         }
 
+        // Track list Notes
+        [StructLayout(LayoutKind.Sequential, Pack = 16)]
+        struct TLNoteConstants
+        {
+            public float TrackTop;
+            public float TrackBottom;
+            public int ScreenWidth;
+            public int ScreenHeight;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        struct TLRenderNote
+        {
+            public byte Channel;
+            public byte Key;
+            public byte Velocity;
+            public float TickStart;
+            public float TickEnd;
+        }
+
         #endregion
 
         // Shader Managers for the Track list view
         ShaderManager trackListBarShader;
         InputLayout trackListBarLayout;
-       
+
         TLBarConstants trackListBarConstants;
         Buffer globalTrackListBarConstants;
         Buffer trackListBarBuffer;
+
+        // Shader Managers for the Notes in the Track list view
+        ShaderManager trackListNoteShader;
+        InputLayout trackListNoteLayout;
+
+        TLNoteConstants trackListNoteConstants;
+        Buffer globalTrackListNoteConstants;
+        Buffer trackListNoteBuffer;
 
         object renderLock = new object();
         int firstRenderBar = 0;
         int firstUnhitBar = 0;
         float lastBarTime = 0;
 
+        int firstRenderNote = 0;
+        int firstUnhitNote = 0;
+        float lastNoteTime = 0;
+
         public EditorRenderer(Device device)
         {
+            #region track list shader
             string trackListShaderData;
 
             trackListShaderData = IO.File.ReadAllText("Shaders/TrackListTrack.fx");
@@ -112,6 +147,54 @@ namespace Andromeda_Editor.Rendering
                 Usage = ResourceUsage.Dynamic,
                 StructureByteStride = 0
             });
+            #endregion
+
+            #region track list notes shader
+
+            string trackListNoteShaderData;
+
+            trackListNoteShaderData = IO.File.ReadAllText("Shaders/TrackListNotes.fx");
+
+            trackListNoteShader = new ShaderManager(
+                device,
+                ShaderBytecode.Compile(trackListNoteShaderData, "VS_Note", "vs_4_0", ShaderFlags.None, EffectFlags.None),
+                ShaderBytecode.Compile(trackListNoteShaderData, "PS", "ps_4_0", ShaderFlags.None, EffectFlags.None),
+                ShaderBytecode.Compile(trackListNoteShaderData, "GS_Note", "gs_4_0", ShaderFlags.None, EffectFlags.None)
+            );
+
+            trackListNoteLayout = new InputLayout(device, ShaderSignature.GetInputSignature(trackListNoteShader.vertexShaderByteCode), new[]
+            {
+                new InputElement("NOTE_DATA", 0, Format.R32_UInt, 0, 0),
+                new InputElement("TICK_START", 0, Format.R32_Float, 4, 0),
+                new InputElement("TICK_END", 0, Format.R32_Float, 8, 0)
+            });
+
+            trackListNoteConstants = new TLNoteConstants()
+            {
+                TrackTop = 1.0f,
+                TrackBottom = 0.0f,
+            };
+
+            trackListNoteBuffer = new Buffer(device, new BufferDescription()
+            {
+                BindFlags = BindFlags.VertexBuffer,
+                CpuAccessFlags = CpuAccessFlags.Write,
+                OptionFlags = ResourceOptionFlags.None,
+                SizeInBytes = Marshal.SizeOf<TLRenderNote>() * TLNoteBufferLength,
+                Usage = ResourceUsage.Dynamic,
+                StructureByteStride = 0
+            });
+
+            globalTrackListNoteConstants = new Buffer(device, new BufferDescription()
+            {
+                BindFlags = BindFlags.ConstantBuffer,
+                CpuAccessFlags = CpuAccessFlags.Write,
+                OptionFlags = ResourceOptionFlags.None,
+                SizeInBytes = Marshal.SizeOf<TLNoteConstants>(),
+                Usage = ResourceUsage.Dynamic,
+                StructureByteStride = 0
+            });
+            #endregion
 
             var renderTargetDesc = new RenderTargetBlendDescription();
             renderTargetDesc.IsBlendEnabled = true;
@@ -160,6 +243,17 @@ namespace Andromeda_Editor.Rendering
             data.Dispose();
         }
 
+        void SetTrackListNoteShaderConstants(DeviceContext context, TLNoteConstants constants)
+        {
+            DataStream data;
+            context.MapSubresource(globalTrackListNoteConstants, 0, MapMode.WriteDiscard, SharpDX.Direct3D11.MapFlags.None, out data);
+            data.Write(constants);
+            context.UnmapSubresource(globalTrackListNoteConstants, 0);
+            context.VertexShader.SetConstantBuffer(0, globalTrackListNoteConstants);
+            context.GeometryShader.SetConstantBuffer(0, globalTrackListNoteConstants);
+            data.Dispose();
+        }
+
         public void Render(Device device, RenderTargetView target, DrawEventArgs args)
         {
             // Clear color
@@ -174,6 +268,7 @@ namespace Andromeda_Editor.Rendering
 
             context.ClearRenderTargetView(target, new Color4(0.0f, 0.0f, 0.0f, 1.0f));
 
+            #region bars
             lock (renderLock)
             {
                 float realTickPos = (float)GlobalNavigation.TickPosition;
@@ -253,7 +348,11 @@ namespace Andromeda_Editor.Rendering
 
                 lastBarTime = realTickPos;
             }
+            #endregion
 
+            #region notes
+
+            #endregion
         }
 
         void RenderLoop<T>(IEnumerable<T> iterator, Action<T> render)

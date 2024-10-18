@@ -9,6 +9,7 @@ namespace Andromeda_Editor.Editor.Settings
     public struct RenderSettings
     {
         public const int BarBufferLength = 1 << 12;
+        public const int NoteBufferLength = 1 << 11;
         public static int RenderThreads = 16;
         public static bool MultiThreadedRendering = false;
     }
